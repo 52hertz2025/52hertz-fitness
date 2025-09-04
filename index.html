@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="manifest" href="manifest.json">
+
+    <!-- 在<head>部分添加 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="assets/images/icon-192x192.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>52hertz健身俱乐部</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <!-- 在<header>中添加移动端菜单按钮 -->
+        <div class="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="container">
+            <div class="logo">52hertz健身俱乐部</div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#" class="active">首页</a></li>
+                    <li><a href="pages/shop.html">商城</a></li>
+                    <li><a href="pages/my-orders.html">我的订单</a></li>
+                    <li><a href="pages/profile.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="main-content">
+        <!-- Banner区域 -->
+        <section class="banner">
+            <div class="banner-content">
+                <h1>欢迎来到52hertz健身俱乐部</h1>
+                <p>专业教练团队，科学健身方案</p>
+                <button class="cta-button" id="joinNow">立即加入</button>
+            </div>
+        </section>
+
+        <!-- 最新活动栏 -->
+        <section class="activities-section">
+            <div class="container">
+                <h2 class="section-title">最新活动</h2>
+                <div class="activities-carousel">
+                    <div class="activity-item">
+                        <img src="assets/images/activity1.jpg" alt="暑期特惠">
+                        <div class="activity-info">
+                            <h3>暑期特惠活动</h3>
+                            <p>即日起至8月31日，年卡5折优惠</p>
+                            <span class="activity-tag">限时</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <img src="assets/images/activity2.jpg" alt="新会员礼包">
+                        <div class="activity-info">
+                            <h3>新会员礼包</h3>
+                            <p>新用户注册即送7天免费体验</p>
+                            <span class="activity-tag">新手</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <img src="assets/images/activity3.jpg" alt="推荐有礼">
+                        <div class="activity-info">
+                            <h3>推荐有礼</h3>
+                            <p>推荐好友办卡，双方各得月卡一张</p>
+                            <span class="activity-tag">推荐</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 教练简介 -->
+        <section class="coaches-section">
+            <div class="container">
+                <h2 class="section-title">专业教练团队</h2>
+                <div class="coaches-grid">
+                    <div class="coach-card">
+                        <img src="assets/images/coach1.jpg" alt="张教练">
+                        <div class="coach-info">
+                            <h3>张伟</h3>
+                            <p class="specialty">力量训练专家</p>
+                            <p class="experience">8年健身教练经验</p>
+                        </div>
+                    </div>
+                    <div class="coach-card">
+                        <img src="assets/images/coach2.jpg" alt="李教练">
+                        <div class="coach-info">
+                            <h3>李娜</h3>
+                            <p class="specialty">瑜伽导师</p>
+                            <p class="experience">5年瑜伽教学经验</p>
+                        </div>
+                    </div>
+                    <div class="coach-card">
+                        <img src="assets/images/coach3.jpg" alt="王教练">
+                        <div class="coach-info">
+                            <h3>王强</h3>
+                            <p class="specialty">营养顾问</p>
+                            <p class="experience">健康管理师认证</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 奖品轮播 -->
+        <section class="prizes-section">
+            <div class="container">
+                <h2 class="section-title">会员奖品</h2>
+                <div class="prizes-carousel">
+                    <div class="prize-item">
+                        <img src="assets/images/prize1.jpg" alt="健身包">
+                        <div class="prize-info">
+                            <h3>品牌健身包</h3>
+                            <p>价值199元</p>
+                        </div>
+                    </div>
+                    <div class="prize-item">
+                        <img src="assets/images/prize2.jpg" alt="运动水壶">
+                        <div class="prize-info">
+                            <h3>智能运动水壶</h3>
+                            <p>价值89元</p>
+                        </div>
+                    </div>
+                    <div class="prize-item">
+                        <img src="assets/images/prize3.jpg" alt="运动毛巾">
+                        <div class="prize-info">
+                            <h3>速干运动毛巾</h3>
+                            <p>价值59元</p>
+                        </div>
+                    </div>
+                    <div class="prize-item">
+                        <img src="assets/images/prize4.jpg" alt="蛋白粉">
+                        <div class="prize-info">
+                            <h3>乳清蛋白粉</h3>
+                            <p>价值299元</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 视频展示 -->
+        <section class="videos-section">
+            <div class="container">
+                <h2 class="section-title">训练视频展示</h2>
+                <div class="videos-grid">
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <img src="assets/images/video1.jpg" alt="胸肌训练">
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <h3>胸肌训练指南</h3>
+                        <p>15分钟高效胸肌训练</p>
+                    </div>
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <img src="assets/images/video2.jpg" alt="瑜伽入门">
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <h3>瑜伽入门教程</h3>
+                        <p>基础体式教学</p>
+                    </div>
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <img src="assets/images/video3.jpg" alt="有氧操">
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <h3>燃脂有氧操</h3>
+                        <p>30分钟高效燃脂</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 登录领取健身卡栏 -->
+        <section class="login-section">
+            <div class="container">
+                <div class="login-card">
+                    <h2>登录领取健身卡</h2>
+                    <p>新用户注册即送<span id="freeDays">7</span>天免费体验</p>
+                    <div class="login-form">
+                        <input type="text" id="phoneInput" placeholder="请输入手机号">
+                        <button id="getCardBtn">获取健身卡</button>
+                    </div>
+                    <div class="login-options">
+                        <a href="#" id="loginLink">已有账号？立即登录</a>
+                        <a href="#" id="registerLink">新用户注册</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 52hertz健身俱乐部. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- 登录模态框 -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>用户登录</h2>
+            <form id="loginForm">
+                <input type="text" placeholder="手机号" required>
+                <input type="password" placeholder="密码" required>
+                <button type="submit">登录</button>
+            </form>
+            <div class="social-login">
+                <p>或使用以下方式登录</p>
+                <div class="social-icons">
+                    <a href="#" class="wechat">微信</a>
+                    <a href="#" class="qq">QQ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

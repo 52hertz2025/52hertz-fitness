@@ -1,0 +1,610 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 头部样式 */
+.header {
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff6b35;
+}
+
+.nav ul {
+    display: flex;
+    list-style: none;
+}
+
+.nav ul li {
+    margin-left: 30px;
+}
+
+.nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav ul li a:hover,
+.nav ul li a.active {
+    color: #ff6b35;
+}
+
+/* Banner样式 */
+.banner {
+    height: 500px;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../assets/images/banner.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.banner-content h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    animation: fadeInDown 1s ease;
+}
+
+.banner-content p {
+    font-size: 24px;
+    margin-bottom: 30px;
+    animation: fadeInUp 1s ease;
+}
+
+.cta-button {
+    background-color: #ff6b35;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    animation: pulse 2s infinite;
+}
+
+.cta-button:hover {
+    background-color: #e55a2b;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* 通用版块样式 */
+.section-title {
+    text-align: center;
+    font-size: 32px;
+    margin: 50px 0 30px;
+    color: #333;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background-color: #ff6b35;
+    margin: 10px auto;
+    border-radius: 2px;
+}
+
+/* 活动栏样式 */
+.activities-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 20px 0;
+    scrollbar-width: none;
+}
+
+.activities-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.activity-item {
+    min-width: 300px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.activity-item:hover {
+    transform: translateY(-10px);
+}
+
+.activity-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.activity-info {
+    padding: 20px;
+}
+
+.activity-info h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.activity-info p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.activity-tag {
+    background-color: #ff6b35;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* 教练简介样式 */
+.coaches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.coach-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.coach-card:hover {
+    transform: translateY(-10px);
+}
+
+.coach-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.coach-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.coach-info h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.specialty {
+    color: #ff6b35;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.experience {
+    color: #666;
+    font-size: 14px;
+}
+
+/* 奖品轮播样式 */
+.prizes-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 20px 0;
+    scrollbar-width: none;
+}
+
+.prizes-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.prize-item {
+    min-width: 250px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.prize-item:hover {
+    transform: scale(1.05);
+}
+
+.prize-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.prize-info {
+    padding: 15px;
+}
+
+.prize-info h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.prize-info p {
+    color: #ff6b35;
+    font-weight: bold;
+}
+
+/* 视频展示样式 */
+.videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.video-item {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.video-thumbnail {
+    position: relative;
+    cursor: pointer;
+}
+
+.video-thumbnail img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.3s;
+}
+
+.video-thumbnail:hover .play-icon {
+    color: white;
+}
+
+.video-item h3 {
+    padding: 15px 15px 5px;
+    font-size: 18px;
+}
+
+.video-item p {
+    padding: 0 15px 15px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* 登录领取健身卡样式 */
+.login-section {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    padding: 60px 0;
+    margin: 50px 0;
+}
+
+.login-card {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.login-card h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.login-card p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #666;
+}
+
+.login-card p span {
+    color: #ff6b35;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.login-form {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.login-form input {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.login-form input:focus {
+    border-color: #ff6b35;
+    outline: none;
+}
+
+#getCardBtn {
+    background-color: #ff6b35;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#getCardBtn:hover {
+    background-color: #e55a2b;
+}
+
+.login-options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.login-options a {
+    color: #ff6b35;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.login-options a:hover {
+    text-decoration: underline;
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    animation: slideIn 0.3s;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+}
+
+.close:hover {
+    color: #333;
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#loginForm input {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#loginForm input:focus {
+    border-color: #ff6b35;
+    outline: none;
+}
+
+#loginForm button {
+    background-color: #ff6b35;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#loginForm button:hover {
+    background-color: #e55a2b;
+}
+
+.social-login {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.social-login p {
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-icons a {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    transition: transform 0.3s;
+}
+
+.social-icons a:hover {
+    transform: translateY(-3px);
+}
+
+.wechat {
+    background-color: #07c160;
+}
+
+.qq {
+    background-color: #12b7f5;
+}
+
+/* 底部样式 */
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(255, 107, 53, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
+    }
+}
+/* 在文件末尾添加以下样式 */
+
+/* 移动端菜单按钮 */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+/* 移动端优化 */
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+    input:focus, textarea:focus {
+        font-size: 16px; /* 防止iOS Safari缩放 */
+    }
+}
+
+/* 触摸优化 */
+.touch-friendly {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 滚动优化 */
+.mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+}

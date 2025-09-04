@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="manifest" href="manifest.json">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 52hertz健身俱乐部</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <!-- 在<header>中添加移动端菜单按钮 -->
+        <div class="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="container">
+            <div class="logo">52hertz健身俱乐部</div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="shop.html">商城</a></li>
+                    <li><a href="my-orders.html">我的订单</a></li>
+                    <li><a href="#" class="active">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="section-title">个人中心</h1>
+
+            <!-- 用户信息 -->
+            <div class="user-profile">
+                <div class="profile-card">
+                    <div class="avatar">
+                        <img src="../assets/images/avatar.png" alt="用户头像">
+                    </div>
+                    <div class="user-info">
+                        <h2 id="userName">张三</h2>
+                        <p>会员等级：<span id="membershipLevel">金牌会员</span></p>
+                        <p>到期时间：<span id="expireDate">2024-12-31</span></p>
+                    </div>
+                    <button class="edit-profile">编辑资料</button>
+                </div>
+            </div>
+
+            <!-- 我的奖品 -->
+            <section class="my-prizes-section">
+                <h2 class="section-title">我的奖品</h2>
+                <div class="prizes-list" id="prizesList">
+                    <!-- 奖品将通过JS动态加载 -->
+                </div>
+            </section>
+
+            <!-- 其他功能 -->
+            <div class="profile-features">
+                <div class="feature-card">
+                    <h3>我的预约</h3>
+                    <p>查看和管理您的课程预约</p>
+                    <button>查看预约</button>
+                </div>
+                <div class="feature-card">
+                    <h3>健身记录</h3>
+                    <p>查看您的健身数据和进步</p>
+                    <button>查看记录</button>
+                </div>
+                <div class="feature-card">
+                    <h3>设置</h3>
+                    <p>账户和通知设置</p>
+                    <button>进入设置</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 52hertz健身俱乐部. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="../js/api.js"></script>
+    <script>
+            // 添加到每个页面的JavaScript部分
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单初始化
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const nav = document.querySelector('.nav');
+
+            if (menuToggle && nav) {
+                menuToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+
+            // 防止iOS缩放
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                document.addEventListener('gesturestart', function(e) {
+                    e.preventDefault();
+                });
+            }
+        });
+
+        // 页面加载完成后获取用户奖品信息
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserPrizes();
+        });
+
+        function loadUserPrizes() {
+            // 模拟用户ID
+            const userId = 1;
+
+            API.getUserPrizes(userId).then(response => {
+                if (response.success) {
+                    const prizesList = document.getElementById('prizesList');
+                    prizesList.innerHTML = '';
+
+                    response.data.forEach(prize => {
+                        const prizeElement = document.createElement('div');
+                        prizeElement.className = 'prize-item';
+                        prizeElement.innerHTML = `
+                            <img src="../assets/images/${prize.image}" alt="${prize.name}">
+                            <div class="prize-info">
+                                <h3>${prize.name}</h3>
+                                <p class="prize-status ${prize.status === '已领取' ? 'received' : prize.status === '待领取' ? 'pending' : 'expired'}">
+                                    ${prize.status}
+                                </p>
+                                ${prize.status === '待领取' ? '<button class="claim-btn">领取奖品</button>' : ''}
+                            </div>
+                        `;
+                        prizesList.appendChild(prizeElement);
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

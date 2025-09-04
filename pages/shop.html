@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="manifest" href="manifest.json">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线上商城 - 52hertz健身俱乐部</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <!-- 在<header>中添加移动端菜单按钮 -->
+        <div class="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="container">
+            <div class="logo">52hertz健身俱乐部</div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="#" class="active">商城</a></li>
+                    <li><a href="my-orders.html">我的订单</a></li>
+                    <li><a href="profile.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="section-title">线上商城</h1>
+
+            <!-- 商品分类 -->
+            <div class="shop-categories">
+                <button class="category-btn active" data-category="all">全部商品</button>
+                <button class="category-btn" data-category="nutrition">营养补剂</button>
+                <button class="category-btn" data-category="equipment">运动装备</button>
+                <button class="category-btn" data-category="accessories">运动配件</button>
+            </div>
+
+            <!-- 商品列表 -->
+            <div class="products-grid" id="productsGrid">
+                <!-- 商品将通过JS动态加载 -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 52hertz健身俱乐部. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="../js/api.js"></script>
+    <script>
+            // 添加到每个页面的JavaScript部分
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单初始化
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const nav = document.querySelector('.nav');
+
+            if (menuToggle && nav) {
+                menuToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+
+            // 防止iOS缩放
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                document.addEventListener('gesturestart', function(e) {
+                    e.preventDefault();
+                });
+            }
+        });
+
+        // 页面加载完成后获取商品信息
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            bindCategoryEvents();
+        });
+
+        function loadProducts(category = 'all') {
+            API.getShopProducts().then(response => {
+                if (response.success) {
+                    const productsGrid = document.getElementById('productsGrid');
+                    productsGrid.innerHTML = '';
+
+                    let filteredProducts = response.data;
+                    if (category !== 'all') {
+                        filteredProducts = response.data.filter(product =>
+                            product.category.includes(category === 'nutrition' ? '营养' :
+                                              category === 'equipment' ? '装备' : '配件')
+                        );
+                    }
+
+                    if (filteredProducts.length === 0) {
+                        productsGrid.innerHTML = '<p class="no-products">暂无相关商品</p>';
+                        return;
+                    }
+
+                    filteredProducts.forEach(product => {
+                        const productElement = document.createElement('div');
+                        productElement.className = 'product-card';
+                        productElement.innerHTML = `
+                            <div class="product-image">
+                                <img src="../assets/images/${product.image}" alt="${product.name}">
+                            </div>
+                            <div class="product-info">
+                                <h3>${product.name}</h3>
+                                <p class="product-category">${product.category}</p>
+                                <p class="product-price">¥${product.price}</p>
+                                <button class="add-to-cart" data-id="${product.id}">加入购物车</button>
+                            </div>
+                        `;
+                        productsGrid.appendChild(productElement);
+                    });
+                }
+            });
+        }
+
+        function bindCategoryEvents() {
+            document.querySelectorAll('.category-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // 更新激活状态
+                    document.querySelectorAll('.category-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    // 加载对应分类的商品
+                    const category = this.dataset.category;
+                    loadProducts(category);
+                });
+            });
+        }
+    </script>
+
+    <style>
+        .shop-categories {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background-color: #ff6b35;
+            color: white;
+            border-color: #ff6b35;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .product-info h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .product-category {
+            color: #ff6b35;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart {
+            background-color: #ff6b35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background-color: #e55a2b;
+        }
+
+        .no-products {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #666;
+            padding: 50px 0;
+        }
+    </style>
+</body>
+</html>

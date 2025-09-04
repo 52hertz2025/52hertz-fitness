@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="manifest" href="manifest.json">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单 - 52hertz健身俱乐部</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <!-- 在<header>中添加移动端菜单按钮 -->
+        <div class="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="container">
+            <div class="logo">52hertz健身俱乐部</div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="shop.html">商城</a></li>
+                    <li><a href="#" class="active">我的订单</a></li>
+                    <li><a href="profile.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="section-title">我的订单</h1>
+
+            <div class="orders-container">
+                <div class="orders-list" id="ordersList">
+                    <!-- 订单将通过JS动态加载 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 52hertz健身俱乐部. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="../js/api.js"></script>
+    <script>
+            // 添加到每个页面的JavaScript部分
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单初始化
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const nav = document.querySelector('.nav');
+
+            if (menuToggle && nav) {
+                menuToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+
+            // 防止iOS缩放
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                document.addEventListener('gesturestart', function(e) {
+                    e.preventDefault();
+                });
+            }
+        });
+
+        // 页面加载完成后获取用户订单信息
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserOrders();
+        });
+
+        function loadUserOrders() {
+            // 模拟用户ID
+            const userId = 1;
+
+            API.getUserOrders(userId).then(response => {
+                if (response.success) {
+                    const ordersList = document.getElementById('ordersList');
+                    ordersList.innerHTML = '';
+
+                    if (response.data.length === 0) {
+                        ordersList.innerHTML = '<p class="no-orders">暂无订单记录</p>';
+                        return;
+                    }
+
+                    response.data.forEach(order => {
+                        const orderElement = document.createElement('div');
+                        orderElement.className = 'order-item';
+                        orderElement.innerHTML = `
+                            <div class="order-header">
+                                <span class="order-id">订单号：${order.id}</span>
+                                <span class="order-date">${order.date}</span>
+                                <span class="order-status ${order.status === '已完成' ? 'completed' : 'pending'}">
+                                    ${order.status}
+                                </span>
+                            </div>
+                            <div class="order-content">
+                                <div class="order-product">
+                                    <h3>${order.product}</h3>
+                                    <p>数量：1</p>
+                                </div>
+                                <div class="order-price">
+                                    <p>¥${order.price}</p>
+                                </div>
+                            </div>
+                            <div class="order-actions">
+                                <button class="view-details">查看详情</button>
+                                ${order.status === '已完成' ? '<button class="rebuy">再次购买</button>' : ''}
+                            </div>
+                        `;
+                        ordersList.appendChild(orderElement);
+                    });
+                }
+            });
+        }
+    </script>
+
+    <style>
+        .orders-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .order-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .order-id {
+            font-weight: bold;
+        }
+
+        .order-date {
+            color: #666;
+        }
+
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .order-status.completed {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+
+        .order-content {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .order-product h3 {
+            margin-bottom: 5px;
+        }
+
+        .order-product p {
+            color: #666;
+        }
+
+        .order-price p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .order-actions button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .order-actions button:hover {
+            background-color: #f5f5f5;
+        }
+
+        .order-actions .rebuy {
+            background-color: #ff6b35;
+            color: white;
+            border-color: #ff6b35;
+        }
+
+        .order-actions .rebuy:hover {
+            background-color: #e55a2b;
+        }
+
+        .no-orders {
+            text-align: center;
+            color: #666;
+            padding: 50px 0;
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!-- pages/payment.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付 - 52hertz健身俱乐部</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .payment-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .payment-header h2 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .order-summary {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .payment-method {
+            text-align: center;
+            cursor: pointer;
+            padding: 20px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .payment-method:hover,
+        .payment-method.active {
+            border-color: #ff6b35;
+            background-color: #fff5f0;
+        }
+
+        .payment-method img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .payment-method h3 {
+            margin: 15px 0 5px;
+        }
+
+        .qrcode-container {
+            text-align: center;
+            margin: 30px 0;
+            display: none;
+        }
+
+        .qrcode-container.active {
+            display: block;
+        }
+
+        .qrcode-img {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .btn-pay {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-pay:hover {
+            background-color: #e55a2b;
+        }
+
+        .btn-pay:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="container">
+            <div class="logo">52hertz健身俱乐部</div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="shop.html">商城</a></li>
+                    <li><a href="my-orders.html">我的订单</a></li>
+                    <li><a href="profile.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="payment-container">
+                <div class="payment-header">
+                    <h2>订单支付</h2>
+                    <p>请选择支付方式完成付款</p>
+                </div>
+
+                <div class="order-summary">
+                    <h3>订单详情</h3>
+                    <div class="order-item">
+                        <span>健身月卡</span>
+                        <span>¥299.00</span>
+                    </div>
+                    <div class="order-item">
+                        <span>数量</span>
+                        <span>1</span>
+                    </div>
+                    <div class="order-total">
+                        <span>总计</span>
+                        <span>¥299.00</span>
+                    </div>
+                </div>
+
+                <h3>选择支付方式</h3>
+                <div class="payment-methods">
+                    <div class="payment-method" data-method="alipay">
+                        <img src="../assets/images/alipay.png" alt="支付宝">
+                        <h3>支付宝</h3>
+                        <p>推荐使用</p>
+                    </div>
+                    <div class="payment-method" data-method="wechat">
+                        <img src="../assets/images/wechat-pay.png" alt="微信支付">
+                        <h3>微信支付</h3>
+                        <p>微信用户首选</p>
+                    </div>
+                </div>
+
+                <div id="alipayQR" class="qrcode-container">
+                    <h3>支付宝扫码支付</h3>
+                    <img src="../assets/images/alipay-qrcode.png" alt="支付宝收款码" class="qrcode-img">
+                    <p>请使用支付宝扫描二维码完成支付</p>
+                </div>
+
+                <div id="wechatQR" class="qrcode-container">
+                    <h3>微信扫码支付</h3>
+                    <img src="../assets/images/wechat-qrcode.png" alt="微信收款码" class="qrcode-img">
+                    <p>请使用微信扫描二维码完成支付</p>
+                </div>
+
+                <button id="payButton" class="btn-pay" disabled>立即支付 ¥299.00</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 52hertz健身俱乐部. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单初始化
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const nav = document.querySelector('.nav');
+
+            if (menuToggle && nav) {
+                menuToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+
+            // 防止iOS缩放
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                document.addEventListener('gesturestart', function(e) {
+                    e.preventDefault();
+                });
+            }
+
+            // 支付方式选择
+            const paymentMethods = document.querySelectorAll('.payment-method');
+            const alipayQR = document.getElementById('alipayQR');
+            const wechatQR = document.getElementById('wechatQR');
+            const payButton = document.getElementById('payButton');
+
+            paymentMethods.forEach(method => {
+                method.addEventListener('click', function() {
+                    // 移除所有激活状态
+                    paymentMethods.forEach(m => m.classList.remove('active'));
+
+                    // 激活当前选择
+                    this.classList.add('active');
+
+                    // 显示对应的二维码
+                    const methodType = this.dataset.method;
+                    alipayQR.classList.remove('active');
+                    wechatQR.classList.remove('active');
+
+                    if (methodType === 'alipay') {
+                        alipayQR.classList.add('active');
+                    } else if (methodType === 'wechat') {
+                        wechatQR.classList.add('active');
+                    }
+
+                    // 启用支付按钮
+                    payButton.disabled = false;
+                });
+            });
+
+            // 支付按钮点击事件
+            payButton.addEventListener('click', function() {
+                const activeMethod = document.querySelector('.payment-method.active');
+                if (!activeMethod) {
+                    alert('请选择支付方式');
+                    return;
+                }
+
+                const methodType = activeMethod.dataset.method;
+                let message = '';
+
+                if (methodType === 'alipay') {
+                    message = '请使用支付宝扫描二维码完成支付，支付成功后页面将自动跳转。';
+                } else {
+                    message = '请使用微信扫描二维码完成支付，支付成功后页面将自动跳转。';
+                }
+
+                alert(message);
+
+                // 模拟支付成功后的跳转
+                setTimeout(() => {
+                    alert('支付成功！订单已确认。');
+                    window.location.href = 'my-orders.html';
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

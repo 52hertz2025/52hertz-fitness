@@ -1,0 +1,173 @@
+/* 平板设备 */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .logo {
+        margin-bottom: 10px;
+    }
+
+    .nav ul {
+        margin: 0;
+    }
+
+    .nav ul li {
+        margin: 0 10px;
+    }
+
+    .banner {
+        height: 400px;
+    }
+
+    .banner-content h1 {
+        font-size: 36px;
+    }
+
+    .banner-content p {
+        font-size: 18px;
+    }
+
+    .section-title {
+        font-size: 28px;
+    }
+
+    .login-form {
+        flex-direction: column;
+    }
+
+    .login-options {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-content {
+        margin: 20% auto;
+        padding: 20px;
+    }
+}
+
+/* 手机设备 */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .banner {
+        height: 300px;
+    }
+
+    .banner-content h1 {
+        font-size: 28px;
+    }
+
+    .banner-content p {
+        font-size: 16px;
+    }
+
+    .cta-button {
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        margin: 30px 0 20px;
+    }
+
+    .activity-item,
+    .prize-item {
+        min-width: 280px;
+    }
+
+    .coaches-grid,
+    .videos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .login-card {
+        padding: 20px;
+    }
+
+    .login-card h2 {
+        font-size: 24px;
+    }
+
+    .login-card p {
+        font-size: 16px;
+    }
+
+    .login-form input,
+    #getCardBtn {
+        padding: 12px;
+    }
+}
+/* 在现有样式基础上添加或修改 */
+
+/* 小屏幕设备优化 */
+@media (max-width: 480px) {
+    /* 表单优化 */
+    .login-form {
+        flex-direction: column;
+    }
+
+    .login-form input,
+    .login-form button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* 按钮优化 */
+    .cta-button,
+    .add-to-cart,
+    .claim-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px; /* 防止iOS缩放 */
+    }
+
+    /* 模态框优化 */
+    .modal-content {
+        width: 95%;
+        margin: 15% auto;
+        padding: 15px;
+    }
+
+    /* 图片优化 */
+    .activity-item img,
+    .coach-card img,
+    .prize-item img,
+    .video-thumbnail img {
+        height: 150px;
+    }
+
+    /* 导航优化 */
+    .nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav ul li {
+        margin: 5px 10px;
+    }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 360px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+
+    .banner-content h1 {
+        font-size: 24px;
+    }
+
+    .banner-content p {
+        font-size: 16px;
+    }
+}
