@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 将现有的 Supabase 引用替换为更可靠的 CDN 链接 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.4/dist/umd/supabase.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理后台 - 52hertz健身俱乐部</title>
@@ -341,12 +344,30 @@
                 </div>
             </div>
 
-            <div id="ordersView" class="admin-view" style="display: none;">
-                <div class="container">
-                    <h2>订单管理</h2>
-                    <p>订单管理功能正在开发中...</p>
-                </div>
-            </div>
+            <!-- 替换 ordersView 的内容 -->
+<div id="ordersView" class="admin-view" style="display: none;">
+    <div class="container">
+        <h2>订单管理</h2>
+        <div class="data-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>用户</th>
+                        <th>产品</th>
+                        <th>金额</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <!-- 订单数据将通过JS动态加载 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 
             <div id="productsView" class="admin-view" style="display: none;">
                 <div class="container">
@@ -355,28 +376,268 @@
                 </div>
             </div>
 
-            <div id="activitiesView" class="admin-view" style="display: none;">
-                <div class="container">
-                    <h2>活动管理</h2>
-                    <p>活动管理功能正在开发中...</p>
-                </div>
-            </div>
-
-            <div id="coachesView" class="admin-view" style="display: none;">
-                <div class="container">
-                    <h2>教练管理</h2>
-                    <p>教练管理功能正在开发中...</p>
-                </div>
-            </div>
+            <!-- 替换 activitiesView 的内容 -->
+<div id="activitiesView" class="admin-view" style="display: none;">
+    <div class="container">
+        <h2>活动管理</h2>
+        <button id="addActivityBtn" class="btn-add">发布活动</button>
+        <div class="data-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>活动名称</th>
+                        <th>描述</th>
+                        <th>标签</th>
+                        <th>图片</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="activitiesTableBody">
+                    <!-- 活动数据将通过JS动态加载 -->
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
+
+<!-- 添加活动模态框 -->
+<div id="activityModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="activityModalTitle">发布活动</h2>
+        <form id="activityForm">
+            <input type="hidden" id="activityId">
+            <div class="form-group">
+                <label for="activityName">活动名称</label>
+                <input type="text" id="activityName" required>
+            </div>
+            <div class="form-group">
+                <label for="activityDescription">活动描述</label>
+                <textarea id="activityDescription" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="activityTag">活动标签</label>
+                <input type="text" id="activityTag" required>
+            </div>
+            <div class="form-group">
+                <label for="activityImage">图片URL</label>
+                <input type="text" id="activityImage" required>
+                <input type="file" id="activityImageFile" accept="image/*">
+            </div>
+            <button type="submit" class="btn-login">发布</button>
+        </form>
+    </div>
+</div>
+
+
+            <!-- 在 admin.html 的教练管理视图中替换原有内容 -->
+<div id="coachesView" class="admin-view" style="display: none;">
+    <div class="container">
+        <h2>教练管理</h2>
+        <button id="addCoachBtn" class="btn-add">添加教练</button>
+        <div class="data-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>专长</th>
+                        <th>经验</th>
+                        <th>图片</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="coachesTableBody">
+                    <!-- 教练数据将通过JS动态加载 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 添加教练模态框 -->
+<div id="coachModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">添加教练</h2>
+        <form id="coachForm">
+            <input type="hidden" id="coachId">
+            <div class="form-group">
+                <label for="coachName">姓名</label>
+                <input type="text" id="coachName" required>
+            </div>
+            <div class="form-group">
+                <label for="coachSpecialty">专长</label>
+                <input type="text" id="coachSpecialty" required>
+            </div>
+            <div class="form-group">
+                <label for="coachExperience">经验</label>
+                <input type="text" id="coachExperience" required>
+            </div>
+            <div class="form-group">
+                <label for="coachImage">图片URL</label>
+                <input type="text" id="coachImage" required>
+                <input type="file" id="coachImageFile" accept="image/*">
+            </div>
+            <button type="submit" class="btn-login">保存</button>
+        </form>
+    </div>
+</div>
 
     <script>
-        // 管理员认证信息 (实际项目中应存储在服务器端)
-        const adminCredentials = {
-            username: 'admin',
-            password: 'admin123'
-        };
+        // Supabase 配置 - 添加更多错误检查
+        const SUPABASE_URL = 'https://cbhucmxawgzquxhjlzov.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiaHVjbXhhd2d6cXV4aGpsem92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5ODY2MjgsImV4cCI6MjA3MjU2MjYyOH0.s4XVRTcPEjlbxrEQZfz_zaivNTJ1JT8EIubIzyMlI6Y';
+
+        console.log("初始化 Supabase 客户端");
+        let supabase;
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log("Supabase 客户端初始化成功");
+        } catch (error) {
+            console.error("Supabase 客户端初始化失败:", error);
+        }
+
+        // 教练管理功能
+        document.getElementById('addCoachBtn').addEventListener('click', function() {
+            document.getElementById('modalTitle').textContent = '添加教练';
+            document.getElementById('coachForm').reset();
+            document.getElementById('coachId').value = '';
+            document.getElementById('coachModal').style.display = 'block';
+        });
+
+        // 关闭教练模态框
+        document.querySelector('#coachModal .close').addEventListener('click', function() {
+            document.getElementById('coachModal').style.display = 'none';
+        });
+
+        // 教练表单提交
+        document.getElementById('coachForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveCoach();
+        });
+
+        async function saveCoach() {
+            const id = document.getElementById('coachId').value;
+            const name = document.getElementById('coachName').value;
+            const specialty = document.getElementById('coachSpecialty').value;
+            const experience = document.getElementById('coachExperience').value;
+            const image = document.getElementById('coachImage').value;
+
+            try {
+                let result;
+                if (id) {
+                    // 更新教练
+                    result = await supabase
+                        .from('coaches')
+                        .update({ name, specialty, experience, image })
+                        .eq('id', id);
+                } else {
+                    // 添加新教练
+                    result = await supabase
+                        .from('coaches')
+                        .insert({ name, specialty, experience, image });
+                }
+
+                if (result.error) throw result.error;
+
+                alert('教练信息保存成功');
+                document.getElementById('coachModal').style.display = 'none';
+                loadCoaches(); // 重新加载教练列表
+            } catch (error) {
+                console.error('保存教练信息出错:', error);
+                alert('保存失败: ' + error.message);
+            }
+        }
+
+        // 加载教练列表
+        async function loadCoaches() {
+            try {
+                const { data, error } = await supabase
+                    .from('coaches')
+                    .select('*')
+                    .order('id');
+
+                if (error) throw error;
+
+                const tbody = document.getElementById('coachesTableBody');
+                tbody.innerHTML = '';
+
+                data.forEach(coach => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${coach.name}</td>
+                        <td>${coach.specialty}</td>
+                        <td>${coach.experience}</td>
+                        <td><img src="${coach.image}" alt="${coach.name}" width="50"></td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" data-id="${coach.id}">编辑</button>
+                            <button class="delete-btn" data-id="${coach.id}">删除</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // 绑定编辑和删除事件
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        editCoach(this.dataset.id);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        deleteCoach(this.dataset.id);
+                    });
+                });
+            } catch (error) {
+                console.error('加载教练列表出错:', error);
+            }
+        }
+
+        // 编辑教练
+        async function editCoach(id) {
+            try {
+                const { data, error } = await supabase
+                    .from('coaches')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('coachId').value = data.id;
+                document.getElementById('coachName').value = data.name;
+                document.getElementById('coachSpecialty').value = data.specialty;
+                document.getElementById('coachExperience').value = data.experience;
+                document.getElementById('coachImage').value = data.image;
+
+                document.getElementById('modalTitle').textContent = '编辑教练';
+                document.getElementById('coachModal').style.display = 'block';
+            } catch (error) {
+                console.error('编辑教练出错:', error);
+                alert('加载教练信息失败: ' + error.message);
+            }
+        }
+
+        // 删除教练
+        async function deleteCoach(id) {
+            if (!confirm('确定要删除这个教练吗？')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('coaches')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('教练删除成功');
+                loadCoaches(); // 重新加载教练列表
+            } catch (error) {
+                console.error('删除教练出错:', error);
+                alert('删除失败: ' + error.message);
+            }
+        }
 
         // 检查是否已登录
         document.addEventListener('DOMContentLoaded', function() {
@@ -385,26 +646,69 @@
             }
         });
 
-        // 管理员登录表单提交
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+       // 管理员登录表单提交 - 改进版本
+        document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            const loginButton = document.querySelector('.btn-login');
+            const originalText = loginButton.textContent;
+
+            // 显示加载状态
+            loginButton.textContent = '登录中...';
+            loginButton.disabled = true;
 
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
             const errorMessage = document.getElementById('errorMessage');
 
-            // 简单的身份验证
-            if (username === adminCredentials.username && password === adminCredentials.password) {
-                // 保存认证状态到 sessionStorage
-                sessionStorage.setItem('adminAuthenticated', 'true');
-                sessionStorage.setItem('adminName', username);
-
-                // 显示管理面板
-                showAdminPanel();
-            } else {
-                errorMessage.textContent = '用户名或密码错误';
+            // 前端验证
+            if (!username || !password) {
+                errorMessage.textContent = '请输入用户名和密码';
+                loginButton.textContent = originalText;
+                loginButton.disabled = false;
+                return;
             }
+
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase 客户端未正确初始化');
+                }
+
+                console.log("正在连接 Supabase...");
+
+                // 查询 admin 表
+                const { data, error } = await supabase
+                    .from('admin')
+                    .select('*')
+                    .eq('username', username)
+                    .eq('password', password);
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log("查询结果:", data);
+                console.log("数据长度:", data ? data.length : 0);
+
+                // 处理查询结果
+                if (data && data.length > 0) {
+                    const user = data[0];
+                    sessionStorage.setItem('adminAuthenticated', 'true');
+                    sessionStorage.setItem('adminName', user.username);
+                    sessionStorage.setItem('adminId', user.id);
+                    showAdminPanel();
+                } else {
+                    errorMessage.textContent = '用户名或密码错误';
+                }
+            } catch (error) {
+                console.error('登录错误:', error);
+                errorMessage.textContent = '登录失败: ' + error.message;
+            }
+
+            // 恢复按钮状态
+            loginButton.textContent = originalText;
+            loginButton.disabled = false;
         });
+
 
         // 退出登录
         document.getElementById('logoutBtn').addEventListener('click', function(e) {
@@ -465,6 +769,7 @@
         function logout() {
             sessionStorage.removeItem('adminAuthenticated');
             sessionStorage.removeItem('adminName');
+            sessionStorage.removeItem('adminId');
             document.getElementById('adminLayout').style.display = 'none';
             document.getElementById('loginContainer').style.display = 'flex';
 
@@ -485,6 +790,15 @@
 
             // 更新标题
             document.querySelector('.admin-header h1').textContent = getViewTitle(viewName);
+
+            // 根据视图加载数据
+            if (viewName === 'coaches') {
+                loadCoaches();
+            } else if (viewName === 'orders') {
+                loadOrders();
+            } else if (viewName === 'activities') {
+                loadActivities();
+            }
         }
 
         // 获取视图标题
@@ -500,19 +814,268 @@
             return titles[viewName] || '管理面板';
         }
 
-        // 添加CSRF保护 (简化版)
-        function generateCSRFToken() {
-            // 实际项目中应使用更安全的令牌生成方法
-            return Math.random().toString(36).substring(2, 15) +
-                   Math.random().toString(36).substring(2, 15);
+        // 活动管理功能
+        document.getElementById('addActivityBtn').addEventListener('click', function() {
+            document.getElementById('activityModalTitle').textContent = '发布活动';
+            document.getElementById('activityForm').reset();
+            document.getElementById('activityId').value = '';
+            document.getElementById('activityModal').style.display = 'block';
+        });
+
+        // 关闭活动模态框
+        document.querySelector('#activityModal .close').addEventListener('click', function() {
+            document.getElementById('activityModal').style.display = 'none';
+        });
+
+        // 活动表单提交
+        document.getElementById('activityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveActivity();
+        });
+
+        // 保存活动信息
+        async function saveActivity() {
+            const id = document.getElementById('activityId').value;
+            const name = document.getElementById('activityName').value;
+            const description = document.getElementById('activityDescription').value;
+            const tag = document.getElementById('activityTag').value;
+            const image = document.getElementById('activityImage').value;
+
+            try {
+                let result;
+                if (id) {
+                    // 更新活动
+                    result = await supabase
+                        .from('activities')
+                        .update({ name, description, tag, image })
+                        .eq('id', id);
+                } else {
+                    // 添加新活动
+                    result = await supabase
+                        .from('activities')
+                        .insert({ name, description, tag, image });
+                }
+
+                if (result.error) throw result.error;
+
+                alert('活动保存成功');
+                document.getElementById('activityModal').style.display = 'none';
+                loadActivities(); // 重新加载活动列表
+            } catch (error) {
+                console.error('保存活动出错:', error);
+                alert('保存失败: ' + error.message);
+            }
         }
 
-        // 在关键操作中使用CSRF令牌
-        function performSecureAction(action) {
-            const csrfToken = generateCSRFToken();
-            // 在实际项目中，应将令牌发送到服务器进行验证
-            console.log('执行安全操作:', action, 'CSRF令牌:', csrfToken);
-            return true;
+        // 加载活动列表
+        async function loadActivities() {
+            try {
+                const { data, error } = await supabase
+                    .from('activities')
+                    .select('*')
+                    .order('id');
+
+                if (error) throw error;
+
+                const tbody = document.getElementById('activitiesTableBody');
+                tbody.innerHTML = '';
+
+                data.forEach(activity => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${activity.name}</td>
+                        <td>${activity.description}</td>
+                        <td>${activity.tag}</td>
+                        <td><img src="${activity.image}" alt="${activity.name}" width="50"></td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" data-id="${activity.id}">编辑</button>
+                            <button class="delete-btn" data-id="${activity.id}">删除</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // 绑定编辑和删除事件
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        editActivity(this.dataset.id);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        deleteActivity(this.dataset.id);
+                    });
+                });
+            } catch (error) {
+                console.error('加载活动列表出错:', error);
+            }
+        }
+
+        // 编辑活动
+        async function editActivity(id) {
+            try {
+                const { data, error } = await supabase
+                    .from('activities')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('activityId').value = data.id;
+                document.getElementById('activityName').value = data.name;
+                document.getElementById('activityDescription').value = data.description;
+                document.getElementById('activityTag').value = data.tag;
+                document.getElementById('activityImage').value = data.image;
+
+                document.getElementById('activityModalTitle').textContent = '编辑活动';
+                document.getElementById('activityModal').style.display = 'block';
+            } catch (error) {
+                console.error('编辑活动出错:', error);
+                alert('加载活动信息失败: ' + error.message);
+            }
+        }
+
+        // 删除活动
+        async function deleteActivity(id) {
+            if (!confirm('确定要删除这个活动吗？')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('activities')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('活动删除成功');
+                loadActivities(); // 重新加载活动列表
+            } catch (error) {
+                console.error('删除活动出错:', error);
+                alert('删除失败: ' + error.message);
+            }
+        }
+
+        // 加载订单列表
+        async function loadOrders() {
+            try {
+                const { data, error } = await supabase
+                    .from('orders')
+                    .select(`
+                        *,
+                        user:users(name)
+                    `)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const tbody = document.getElementById('ordersTableBody');
+                tbody.innerHTML = '';
+
+                data.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.id}</td>
+                        <td>${order.user?.name || '未知用户'}</td>
+                        <td>${order.product_name}</td>
+                        <td>¥${order.amount}</td>
+                        <td>
+                            <select class="order-status" data-id="${order.id}">
+                                <option value="待支付" ${order.status === '待支付' ? 'selected' : ''}>待支付</option>
+                                <option value="已支付" ${order.status === '已支付' ? 'selected' : ''}>已支付</option>
+                                <option value="已完成" ${order.status === '已完成' ? 'selected' : ''}>已完成</option>
+                                <option value="已取消" ${order.status === '已取消' ? 'selected' : ''}>已取消</option>
+                            </select>
+                        </td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" data-id="${order.id}">详情</button>
+                            <button class="delete-btn" data-id="${order.id}">删除</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // 绑定状态更改事件
+                document.querySelectorAll('.order-status').forEach(select => {
+                    select.addEventListener('change', function() {
+                        updateOrderStatus(this.dataset.id, this.value);
+                    });
+                });
+
+                // 绑定详情和删除事件
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        viewOrderDetails(this.dataset.id);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        deleteOrder(this.dataset.id);
+                    });
+                });
+            } catch (error) {
+                console.error('加载订单列表出错:', error);
+            }
+        }
+
+        // 更新订单状态
+        async function updateOrderStatus(orderId, status) {
+            try {
+                const { error } = await supabase
+                    .from('orders')
+                    .update({ status })
+                    .eq('id', orderId);
+
+                if (error) throw error;
+
+                alert('订单状态更新成功');
+            } catch (error) {
+                console.error('更新订单状态出错:', error);
+                alert('更新失败: ' + error.message);
+            }
+        }
+
+        // 查看订单详情
+        async function viewOrderDetails(orderId) {
+            try {
+                const { data, error } = await supabase
+                    .from('orders')
+                    .select(`
+                        *,
+                        user:users(name, email, phone)
+                    `)
+                    .eq('id', orderId)
+                    .single();
+
+                if (error) throw error;
+
+                alert(`订单详情:\n订单号: ${data.id}\n用户: ${data.user?.name}\n产品: ${data.product_name}\n金额: ¥${data.amount}\n状态: ${data.status}\n创建时间: ${new Date(data.created_at).toLocaleString()}`);
+            } catch (error) {
+                console.error('查看订单详情出错:', error);
+                alert('加载订单详情失败: ' + error.message);
+            }
+        }
+
+        // 删除订单
+        async function deleteOrder(orderId) {
+            if (!confirm('确定要删除这个订单吗？')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('orders')
+                    .delete()
+                    .eq('id', orderId);
+
+                if (error) throw error;
+
+                alert('订单删除成功');
+                loadOrders(); // 重新加载订单列表
+            } catch (error) {
+                console.error('删除订单出错:', error);
+                alert('删除失败: ' + error.message);
+            }
         }
     </script>
 </body>

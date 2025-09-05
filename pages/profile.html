@@ -1,18 +1,183 @@
+<!-- pages/profile.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link rel="manifest" href="manifest.json">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人中心 - 52hertz健身俱乐部</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .profile-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.3);
+            margin: 0 auto 15px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #ff6b35;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f9f9f9;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .info-card h3 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .info-card p {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .activate-trial {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .btn-activate {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-activate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .section-title {
+            text-align: center;
+            margin: 30px 0 20px;
+            color: #333;
+        }
+
+        .prizes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 0 20px 30px;
+        }
+
+        .prize-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .prize-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .prize-image {
+            height: 150px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: #ff6b35;
+        }
+
+        .prize-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .prize-info h3 {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .prize-status {
+            font-size: 14px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-received {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* 退出按钮样式 */
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
 </head>
 <body>
     <!-- 头部导航 -->
     <header class="header">
-        <!-- 在<header>中添加移动端菜单按钮 -->
         <div class="mobile-menu-toggle">
             <span></span>
             <span></span>
@@ -34,47 +199,41 @@
 
     <main class="main-content">
         <div class="container">
-            <h1 class="section-title">个人中心</h1>
-
-            <!-- 用户信息 -->
-            <div class="user-profile">
-                <div class="profile-card">
-                    <div class="avatar">
-                        <img src="../assets/images/avatar.png" alt="用户头像">
-                    </div>
-                    <div class="user-info">
-                        <h2 id="userName">张三</h2>
-                        <p>会员等级：<span id="membershipLevel">金牌会员</span></p>
-                        <p>到期时间：<span id="expireDate">2024-12-31</span></p>
-                    </div>
-                    <button class="edit-profile">编辑资料</button>
+            <div class="profile-container">
+                <div class="profile-header">
+                    <button class="logout-btn" id="logoutBtn">退出登录</button>
+                    <div class="profile-avatar" id="profileAvatar">👤</div>
+                    <h2 id="userName">用户名</h2>
+                    <p>会员等级：<span id="membershipLevel">-</span></p>
                 </div>
-            </div>
 
-            <!-- 我的奖品 -->
-            <section class="my-prizes-section">
+                <div class="profile-info">
+                    <div class="info-card">
+                        <h3>手机号</h3>
+                        <p id="userPhone">-</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>开卡时间</h3>
+                        <p id="startDate">-</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>到期时间</h3>
+                        <p id="expireDate">-</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>积分</h3>
+                        <p id="userPoints">0</p>
+                    </div>
+                </div>
+
+                <div id="activateTrialSection" class="activate-trial" style="display: none;">
+                    <p>您已领取7天体验卡，请激活使用</p>
+                    <button class="btn-activate" id="activateTrialBtn">激活体验卡</button>
+                </div>
+
                 <h2 class="section-title">我的奖品</h2>
-                <div class="prizes-list" id="prizesList">
+                <div class="prizes-grid" id="prizesList">
                     <!-- 奖品将通过JS动态加载 -->
-                </div>
-            </section>
-
-            <!-- 其他功能 -->
-            <div class="profile-features">
-                <div class="feature-card">
-                    <h3>我的预约</h3>
-                    <p>查看和管理您的课程预约</p>
-                    <button>查看预约</button>
-                </div>
-                <div class="feature-card">
-                    <h3>健身记录</h3>
-                    <p>查看您的健身数据和进步</p>
-                    <button>查看记录</button>
-                </div>
-                <div class="feature-card">
-                    <h3>设置</h3>
-                    <p>账户和通知设置</p>
-                    <button>进入设置</button>
                 </div>
             </div>
         </div>
@@ -86,9 +245,12 @@
         </div>
     </footer>
 
-    <script src="../js/api.js"></script>
     <script>
-            // 添加到每个页面的JavaScript部分
+        // Supabase配置
+        const SUPABASE_URL = 'https://cbhucmxawgzquxhjlzov.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiaHVjbXhhd2d6cXV4aGpsem92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5ODY2MjgsImV4cCI6MjA3MjU2MjYyOH0.s4XVRTcPEjlbxrEQZfz_zaivNTJ1JT8EIubIzyMlI6Y';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         document.addEventListener('DOMContentLoaded', function() {
             // 移动端菜单初始化
             const menuToggle = document.querySelector('.mobile-menu-toggle');
@@ -106,39 +268,191 @@
                     e.preventDefault();
                 });
             }
-        });
 
-        // 页面加载完成后获取用户奖品信息
-        document.addEventListener('DOMContentLoaded', function() {
+            // 页面加载完成后获取用户信息
+            loadUserProfile();
             loadUserPrizes();
+
+            // 绑定激活按钮事件
+            document.getElementById('activateTrialBtn').addEventListener('click', activateTrial);
+
+            // 退出登录按钮
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                logout();
+            });
         });
 
-        function loadUserPrizes() {
-            // 模拟用户ID
-            const userId = 1;
+        async function loadUserProfile() {
+            // 从sessionStorage获取用户信息
+            const user = sessionStorage.getItem('user');
+            if (!user) {
+                window.location.href = '../index.html';
+                return;
+            }
 
-            API.getUserPrizes(userId).then(response => {
-                if (response.success) {
-                    const prizesList = document.getElementById('prizesList');
-                    prizesList.innerHTML = '';
+            const userData = JSON.parse(user);
 
-                    response.data.forEach(prize => {
-                        const prizeElement = document.createElement('div');
-                        prizeElement.className = 'prize-item';
-                        prizeElement.innerHTML = `
-                            <img src="../assets/images/${prize.image}" alt="${prize.name}">
-                            <div class="prize-info">
-                                <h3>${prize.name}</h3>
-                                <p class="prize-status ${prize.status === '已领取' ? 'received' : prize.status === '待领取' ? 'pending' : 'expired'}">
-                                    ${prize.status}
-                                </p>
-                                ${prize.status === '待领取' ? '<button class="claim-btn">领取奖品</button>' : ''}
-                            </div>
-                        `;
-                        prizesList.appendChild(prizeElement);
-                    });
+            // 设置用户信息
+            document.getElementById('userName').textContent = userData.username;
+            document.getElementById('userPhone').textContent = userData.phone || '-';
+            document.getElementById('membershipLevel').textContent = userData.membership_type || '-';
+            document.getElementById('userPoints').textContent = userData.points || 0;
+
+            // 设置用户头像
+            const firstLetter = userData.username.charAt(0).toUpperCase();
+            document.getElementById('profileAvatar').textContent = firstLetter;
+
+            // 设置开卡和到期时间（如果有）
+            if (userData.membership_type === '体验卡' && userData.created_at) {
+                const startDate = new Date(userData.created_at);
+                document.getElementById('startDate').textContent = startDate.toLocaleDateString();
+
+                // 计算到期时间（7天）
+                const expireDate = new Date(startDate);
+                expireDate.setDate(expireDate.getDate() + 7);
+                document.getElementById('expireDate').textContent = expireDate.toLocaleDateString();
+            } else if (userData.experience_card && !userData.membership_type) {
+                // 如果用户已领取但未激活体验卡，显示激活按钮
+                document.getElementById('activateTrialSection').style.display = 'block';
+            }
+        }
+
+        async function loadUserPrizes() {
+            try {
+                // 从sessionStorage获取用户信息
+                const user = sessionStorage.getItem('user');
+                if (!user) {
+                    window.location.href = '../index.html';
+                    return;
                 }
-            });
+
+                const userData = JSON.parse(user);
+
+                // 获取用户的奖品
+                const { data, error } = await supabase
+                    .from('prizes')
+                    .select('*')
+                    .eq('user_id', userData.id);
+
+                if (error) throw error;
+
+                const prizesList = document.getElementById('prizesList');
+                prizesList.innerHTML = '';
+
+                // 添加体验卡奖品（根据 experience_card 字段判断）
+                const experienceCardPrize = {
+                    name: '7天免费体验卡',
+                    status: userData.experience_card ? '已领取' : '待领取'
+                };
+
+                // 添加体验卡奖品到列表
+                const experienceCardElement = document.createElement('div');
+                experienceCardElement.className = 'prize-card';
+                experienceCardElement.innerHTML = `
+                    <div class="prize-image">🎟️</div>
+                    <div class="prize-info">
+                        <h3>${experienceCardPrize.name}</h3>
+                        <span class="prize-status status-${experienceCardPrize.status === '待领取' ? 'pending' : 'received'}">
+                            ${experienceCardPrize.status}
+                        </span>
+                    </div>
+                `;
+                prizesList.appendChild(experienceCardElement);
+
+                // 显示其他奖品
+                if (data.length === 0) {
+                    // 如果没有其他奖品，只显示体验卡
+                    return;
+                }
+
+                data.forEach(prize => {
+                    const prizeElement = document.createElement('div');
+                    prizeElement.className = 'prize-card';
+                    prizeElement.innerHTML = `
+                        <div class="prize-image">🎁</div>
+                        <div class="prize-info">
+                            <h3>${prize.name}</h3>
+                            <span class="prize-status status-${prize.status === '待领取' ? 'pending' :
+                                                             prize.status === '已领取' ? 'received' : 'expired'}">
+                                ${prize.status}
+                            </span>
+                        </div>
+                    `;
+                    prizesList.appendChild(prizeElement);
+                });
+            } catch (error) {
+                console.error('加载奖品出错:', error);
+                document.getElementById('prizesList').innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">加载奖品失败</p>';
+            }
+        }
+
+        async function activateTrial() {
+            try {
+                // 从sessionStorage获取用户信息
+                const user = sessionStorage.getItem('user');
+                if (!user) {
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                const userData = JSON.parse(user);
+
+                // 更新用户信息
+                const startDate = new Date();
+
+                // 更新用户表
+                const { error: updateError } = await supabase
+                    .from('users')
+                    .update({
+                        membership_type: '体验卡',
+                        created_at: startDate.toISOString()
+                    })
+                    .eq('id', userData.id);
+
+                if (updateError) throw updateError;
+
+                // 添加奖品记录
+                const { error: prizeError } = await supabase
+                    .from('prizes')
+                    .insert({
+                        user_id: userData.id,
+                        name: '7天免费体验卡',
+                        status: '已领取'
+                    });
+
+                if (prizeError) throw prizeError;
+
+                // 更新页面显示
+                document.getElementById('startDate').textContent = startDate.toLocaleDateString();
+
+                // 计算到期时间（7天）
+                const expireDate = new Date(startDate);
+                expireDate.setDate(expireDate.getDate() + 7);
+                document.getElementById('expireDate').textContent = expireDate.toLocaleDateString();
+
+                document.getElementById('activateTrialSection').style.display = 'none';
+                document.getElementById('membershipLevel').textContent = '体验卡';
+
+                // 更新sessionStorage中的用户信息
+                userData.membership_type = '体验卡';
+                userData.created_at = startDate.toISOString();
+                sessionStorage.setItem('user', JSON.stringify(userData));
+
+                alert('体验卡激活成功！');
+
+                // 重新加载奖品
+                loadUserPrizes();
+            } catch (error) {
+                alert('激活失败，请稍后重试: ' + error.message);
+            }
+        }
+
+        // 退出登录功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                sessionStorage.removeItem('user');
+                window.location.href = '../index.html';
+            }
         }
     </script>
 </body>

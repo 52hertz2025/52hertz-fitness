@@ -1,7 +1,9 @@
+<!-- pages/my-orders.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,9 +52,13 @@
         </div>
     </footer>
 
-    <script src="../js/api.js"></script>
     <script>
-            // 添加到每个页面的JavaScript部分
+        // Supabase配置
+        const SUPABASE_URL = 'https://cbhucmxawgzquxhjlzov.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiaHVjbXhhd2d6cXV4aGpsem92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5ODY2MjgsImV4cCI6MjA3MjU2MjYyOH0.s4XVRTcPEjlbxrEQZfz_zaivNTJ1JT8EIubIzyMlI6Y';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 添加到每个页面的JavaScript部分
         document.addEventListener('DOMContentLoaded', function() {
             // 移动端菜单初始化
             const menuToggle = document.querySelector('.mobile-menu-toggle');
@@ -74,52 +80,166 @@
 
         // 页面加载完成后获取用户订单信息
         document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否有来自购物车的结账数据
+            processCheckoutCart();
+
+            // 加载用户订单
             loadUserOrders();
         });
 
-        function loadUserOrders() {
-            // 模拟用户ID
-            const userId = 1;
+        // 处理来自购物车的结账数据
+        async function processCheckoutCart() {
+            const checkoutCart = localStorage.getItem('checkoutCart');
+            if (checkoutCart) {
+                const cartItems = JSON.parse(checkoutCart);
 
-            API.getUserOrders(userId).then(response => {
-                if (response.success) {
-                    const ordersList = document.getElementById('ordersList');
-                    ordersList.innerHTML = '';
+                // 创建订单
+                await createOrderFromCart(cartItems);
 
-                    if (response.data.length === 0) {
-                        ordersList.innerHTML = '<p class="no-orders">暂无订单记录</p>';
-                        return;
-                    }
+                // 清除购物车数据
+                localStorage.removeItem('checkoutCart');
+                localStorage.removeItem('shoppingCart');
+            }
+        }
 
-                    response.data.forEach(order => {
-                        const orderElement = document.createElement('div');
-                        orderElement.className = 'order-item';
-                        orderElement.innerHTML = `
-                            <div class="order-header">
-                                <span class="order-id">订单号：${order.id}</span>
-                                <span class="order-date">${order.date}</span>
-                                <span class="order-status ${order.status === '已完成' ? 'completed' : 'pending'}">
-                                    ${order.status}
-                                </span>
-                            </div>
-                            <div class="order-content">
-                                <div class="order-product">
-                                    <h3>${order.product}</h3>
-                                    <p>数量：1</p>
-                                </div>
-                                <div class="order-price">
-                                    <p>¥${order.price}</p>
-                                </div>
-                            </div>
-                            <div class="order-actions">
-                                <button class="view-details">查看详情</button>
-                                ${order.status === '已完成' ? '<button class="rebuy">再次购买</button>' : ''}
-                            </div>
-                        `;
-                        ordersList.appendChild(orderElement);
-                    });
+        // 从购物车创建订单
+        async function createOrderFromCart(cartItems) {
+            try {
+                // 从sessionStorage获取用户信息
+                const user = sessionStorage.getItem('user');
+                if (!user) {
+                    window.location.href = '../index.html';
+                    return;
                 }
-            });
+
+                const userData = JSON.parse(user);
+
+                // 计算总金额
+                const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+                // 构建商品名称列表
+                const productNames = cartItems.map(item => `${item.name} x${item.quantity}`).join(', ');
+
+                // 创建订单记录
+                const { data, error } = await supabase
+                    .from('orders')
+                    .insert({
+                        user_id: userData.id,
+                        product_name: productNames,
+                        amount: totalAmount,
+                        status: '待支付',
+                        payment_method: '待选择'
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                console.log('订单创建成功:', data);
+            } catch (error) {
+                console.error('创建订单出错:', error);
+                document.getElementById('ordersList').innerHTML = '<p class="no-orders">创建订单失败: ' + error.message + '</p>';
+            }
+        }
+
+        async function loadUserOrders() {
+            try {
+                // 从sessionStorage获取用户信息
+                const user = sessionStorage.getItem('user');
+                if (!user) {
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                const userData = JSON.parse(user);
+                const userId = userData.id;
+
+                const { data, error } = await supabase
+                    .from('orders')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const ordersList = document.getElementById('ordersList');
+                ordersList.innerHTML = '';
+
+                if (data.length === 0) {
+                    ordersList.innerHTML = '<p class="no-orders">暂无订单记录</p>';
+                    return;
+                }
+
+                data.forEach(order => {
+                    const orderElement = document.createElement('div');
+                    orderElement.className = 'order-item';
+                    orderElement.innerHTML = `
+                        <div class="order-header">
+                            <span class="order-id">订单号：${order.id}</span>
+                            <span class="order-date">${new Date(order.created_at).toLocaleDateString()}</span>
+                            <span class="order-status ${order.status === '已完成' ? 'completed' : order.status === '已支付' ? 'completed' : order.status === '待支付' ? 'pending' : ''}">
+                                ${order.status}
+                            </span>
+                        </div>
+                        <div class="order-content">
+                            <div class="order-product">
+                                <h3>${order.product_name}</h3>
+                                <p>数量：1</p>
+                            </div>
+                            <div class="order-price">
+                                <p>¥${parseFloat(order.amount).toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <button class="view-details" data-id="${order.id}">查看详情</button>
+                            ${order.status === '待支付' ? '<button class="pay-now" data-id="' + order.id + '" data-amount="' + order.amount + '" data-product="' + order.product_name + '">立即支付</button>' : ''}
+                            ${order.status === '已完成' ? '<button class="rebuy">再次购买</button>' : ''}
+                        </div>
+                    `;
+                    ordersList.appendChild(orderElement);
+                });
+
+                // 绑定查看详情事件
+                document.querySelectorAll('.view-details').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        viewOrderDetails(this.dataset.id);
+                    });
+                });
+
+                // 绑定支付按钮事件
+                document.querySelectorAll('.pay-now').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // 跳转到支付页面，传递订单信息
+                        const orderId = this.dataset.id;
+                        const amount = this.dataset.amount;
+                        const product = this.dataset.product;
+
+                        // 构建支付页面URL并传递参数
+                        window.location.href = `payment.html?orderId=${orderId}&amount=${amount}&product=${encodeURIComponent(product)}`;
+                    });
+                });
+            } catch (error) {
+                console.error('加载订单出错:', error);
+                document.getElementById('ordersList').innerHTML = '<p class="no-orders">加载订单失败: ' + error.message + '</p>';
+            }
+        }
+
+        // 查看订单详情
+        async function viewOrderDetails(orderId) {
+            try {
+                const { data, error } = await supabase
+                    .from('orders')
+                    .select('*')
+                    .eq('id', orderId)
+                    .single();
+
+                if (error) throw error;
+
+                alert(`订单详情:\n订单号: ${data.id}\n产品: ${data.product_name}\n金额: ¥${data.amount}\n状态: ${data.status}\n创建时间: ${new Date(data.created_at).toLocaleString()}`);
+            } catch (error) {
+                console.error('查看订单详情出错:', error);
+                alert('加载订单详情失败: ' + error.message);
+            }
         }
     </script>
 
@@ -166,6 +286,11 @@
             color: #4caf50;
         }
 
+        .order-status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
         .order-content {
             display: flex;
             justify-content: space-between;
@@ -204,14 +329,24 @@
             background-color: #f5f5f5;
         }
 
-        .order-actions .rebuy {
+        .order-actions .pay-now {
             background-color: #ff6b35;
             color: white;
             border-color: #ff6b35;
         }
 
-        .order-actions .rebuy:hover {
+        .order-actions .pay-now:hover {
             background-color: #e55a2b;
+        }
+
+        .order-actions .rebuy {
+            background-color: #17a2b8;
+            color: white;
+            border-color: #17a2b8;
+        }
+
+        .order-actions .rebuy:hover {
+            background-color: #138496;
         }
 
         .no-orders {

@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>支付 - 52hertz健身俱乐部</title>
@@ -154,8 +156,8 @@
                 <div class="order-summary">
                     <h3>订单详情</h3>
                     <div class="order-item">
-                        <span>健身月卡</span>
-                        <span>¥299.00</span>
+                        <span id="productName">健身月卡</span>
+                        <span id="productPrice">¥299.00</span>
                     </div>
                     <div class="order-item">
                         <span>数量</span>
@@ -163,7 +165,7 @@
                     </div>
                     <div class="order-total">
                         <span>总计</span>
-                        <span>¥299.00</span>
+                        <span id="totalAmount">¥299.00</span>
                     </div>
                 </div>
 
@@ -193,7 +195,7 @@
                     <p>请使用微信扫描二维码完成支付</p>
                 </div>
 
-                <button id="payButton" class="btn-pay" disabled>立即支付 ¥299.00</button>
+                <button id="payButton" class="btn-pay" disabled>立即支付 <span id="payAmount">¥299.00</span></button>
             </div>
         </div>
     </main>
@@ -205,6 +207,20 @@
     </footer>
 
     <script>
+        // 获取URL参数
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split('&');
+
+            for (let i = 0; i < pairs.length; i++) {
+                const pair = pairs[i].split('=');
+                params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+            }
+
+            return params;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // 移动端菜单初始化
             const menuToggle = document.querySelector('.mobile-menu-toggle');
@@ -221,6 +237,15 @@
                 document.addEventListener('gesturestart', function(e) {
                     e.preventDefault();
                 });
+            }
+
+            // 获取URL参数并填充订单信息
+            const params = getUrlParams();
+            if (params.orderId && params.amount && params.product) {
+                document.getElementById('productName').textContent = params.product;
+                document.getElementById('productPrice').textContent = `¥${params.amount}`;
+                document.getElementById('totalAmount').textContent = `¥${params.amount}`;
+                document.getElementById('payAmount').textContent = `¥${params.amount}`;
             }
 
             // 支付方式选择
@@ -254,7 +279,7 @@
             });
 
             // 支付按钮点击事件
-            payButton.addEventListener('click', function() {
+            payButton.addEventListener('click', async function() {
                 const activeMethod = document.querySelector('.payment-method.active');
                 if (!activeMethod) {
                     alert('请选择支付方式');
@@ -262,21 +287,56 @@
                 }
 
                 const methodType = activeMethod.dataset.method;
-                let message = '';
 
-                if (methodType === 'alipay') {
-                    message = '请使用支付宝扫描二维码完成支付，支付成功后页面将自动跳转。';
-                } else {
-                    message = '请使用微信扫描二维码完成支付，支付成功后页面将自动跳转。';
+                // 获取订单信息
+                const params = getUrlParams();
+                const productName = params.product || '健身月卡';
+                const amount = parseFloat(params.amount) || 299.00;
+
+                // 创建订单记录
+                try {
+                    const { data, error } = await supabase
+                        .from('orders')
+                        .insert({
+                            user_id: 1, // 实际项目中应从登录用户获取
+                            product_name: productName,
+                            amount: amount,
+                            status: '待支付',
+                            payment_method: methodType
+                        })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    let message = '';
+                    if (methodType === 'alipay') {
+                        message = '请使用支付宝扫描二维码完成支付，支付成功后页面将自动跳转。';
+                    } else {
+                        message = '请使用微信扫描二维码完成支付，支付成功后页面将自动跳转。';
+                    }
+
+                    alert(message);
+
+                    // 模拟支付成功后的跳转
+                    setTimeout(async () => {
+                        // 更新订单状态为已支付
+                        const { error: updateError } = await supabase
+                            .from('orders')
+                            .update({ status: '已支付' })
+                            .eq('id', data.id);
+
+                        if (updateError) {
+                            console.error('更新订单状态出错:', updateError);
+                        }
+
+                        alert('支付成功！订单已确认。');
+                        window.location.href = 'my-orders.html';
+                    }, 3000);
+                } catch (error) {
+                    console.error('创建订单出错:', error);
+                    alert('支付失败: ' + error.message);
                 }
-
-                alert(message);
-
-                // 模拟支付成功后的跳转
-                setTimeout(() => {
-                    alert('支付成功！订单已确认。');
-                    window.location.href = 'my-orders.html';
-                }, 3000);
             });
         });
     </script>
